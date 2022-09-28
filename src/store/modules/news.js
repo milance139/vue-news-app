@@ -30,8 +30,8 @@ export const actions = {
           const apiUrl ='https://newsapi.org/v2/everything?q="' + encodeURIComponent(titile) + '"' +
           '&searchIn=title' +
           '&apiKey=' + Vue.prototype.$apiKey;
+          
           axios.get(apiUrl).then(response => {
-            console.log(response.data.articles[0]);
             commit('SET_ARTICLE', response.data.articles[0])
           }).catch(e => {
             console.log("Greška", e);
