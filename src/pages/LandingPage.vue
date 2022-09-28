@@ -36,9 +36,12 @@
                 <v-btn block elevation="2" v-if="haveMorePages" @click="loadMore()" color="primary">Load more</v-btn>
             </v-flex>
         </v-layout>
-
     </v-container>
+    <v-icon class="go-to-top-button" color="white" @click="toTop">
+      mdi-chevron-up
+    </v-icon>
   </v-app>
+  
 </template>
 
 <script>
@@ -126,21 +129,26 @@ export default {
       else {
         this.fetchData();
       }
-    }
+    },
+    toTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    },
   }
 
 }
 </script>
 
 <style>
-.toolbar-items{
-  max-width: 400px;
-  width: 100%;
-}
-.fixed-bar{
-    position: sticky;
-    position: -webkit-sticky; /* for Safari */
-    top: 6em;
-    z-index: 2;
+.go-to-top-button{
+  position: fixed !important;
+  bottom: 80px;
+  right: 80px;
+  background: #1976d2 !important;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 </style>
