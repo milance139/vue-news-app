@@ -29,7 +29,7 @@
             </v-flex>
         </v-layout>
 
-        <HeadlineNews :articles="articles"></HeadlineNews>
+        <HeadlineNews :articles="landingPageNews"></HeadlineNews>
                     
         <v-layout row wrap class="my-5">
             <v-flex xs8 offset-xs2>
@@ -43,8 +43,8 @@
 
 <script>
 
-import axios from 'axios' //importing the axios a HTTP library to connects the app with the API
 import HeadlineNews from '../components/HeadlineNews.vue'
+import { mapState, Store } from 'vuex'
 
 export default {
   components: {
@@ -52,74 +52,61 @@ export default {
   },
   data() {
     return {
-      api_key:'9cd715788d1b40c2828d38a9d5c197d6',
-      apiUrl: "",
-      articles: [],
-      currentPage: 1,
-      totalResults: 0,
-      maxPerPage: 20,
       searchWord: '',
-      articles: [],
-      sortBy: "",
+      selectedSortingType: 'publishedAt',
       newsSearched: false,
-      country: 'us',
-      selectedSortingType : "relevancy",
       sortingItems: [
         { title: 'Relevancy', value: "relevancy" },
         { title: 'Popularity', value: "popularity" },
         { title: 'Published At', value: "publishedAt" },
-      ]
+      ],
+      searchModel: {
+        currentPage: 1,
+        maxPerPage: 20,
+        searchWord: '',
+        country: 'gb',
+        selectedSortingType: "publishedAt"
+      }
     }
   },
   computed: {
+    ...mapState({
+      landingPageNews: state => state.news.landingPageNews,
+      totalResults: state => state.news.totalResults
+    }),
     pageCount() {
-      return Math.ceil(this.totalResults/this.maxPerPage);
+      return Math.ceil(this.totalResults/this.searchModel.maxPerPage);
     },
     haveMorePages() {
-      return this.currentPage < this.pageCount 
+      return this.searchModel.currentPage < this.pageCount 
     }
   },
-  created () {
-    this.fetchTopNews();
+  mounted() {
+    this.$store.dispatch('news/GET_HEADLINE_NEWS', this.searchModel)
   },
   methods: {
     resetData() {
-      this.currentPage = 1;
-      this.articles = [];
-      this.selectedSortingType = "relevancy"
-    },
-    fetchTopNews() {
-      this.apiUrl = 'https://newsapi.org/v2/top-headlines?country=' + this.country +
-                    '&pageSize=' + this.maxPerPage +
-                    '&apiKey=' + this.api_key;
-      this.searchWord = '';
-      
-      this.resetData();
-      this.fetchData();
+      this.searchModel.currentPage = 1;
+      this.$store.commit('news/CLEAR_HEADLINE_NEWS');
+      this.searchModel.selectedSortingType = "publishedAt"
+      this.searchModel.searchWord = ""
     },
     fetchData() {
-      axios.get(this.apiUrl + '&page=' + this.currentPage).then(response => {
-        response.data.articles.forEach(element => {
-          this.articles.push(element)
-        });
-        this.totalResults = response.data.totalResults
-      }).catch(e => {
-        console.log("Greska: ", e);
-      })
+      this.$store.dispatch('news/GET_HEADLINE_NEWS', this.searchModel)
     },
     fetchSearchNews() {
       if(this.searchWord !== '')
       {
-        this.apiUrl = 'https://newsapi.org/v2/everything?q=' + this.searchWord +
-                      '&pageSize=' + this.maxPerPage +
-                      '&apiKey=' + this.api_key +
-                      '&sortBy=' + this.selectedSortingType;
-        this.resetData();
-        this.fetchData();
-        this.newsSearched = true;
+        if(this.newsSearched != true || this.selectedSortingType != this.searchModel.selectedSortingType || this.searchModel.searchWord != this.searchWord) {
+          this.searchModel.currentPage = 1
+          this.searchModel.searchWord = this.searchWord
+          this.searchModel.selectedSortingType = this.selectedSortingType
+        }
+        this.newsSearched = true
+        this.$store.dispatch('news/SEARCH_NEWS', this.searchModel)
       }
       else {
-        this.fetchTopNews();
+        this.fetchData();
         this.newsSearched = false
       }
     },
@@ -128,12 +115,17 @@ export default {
         this.fetchSearchNews();
     },
     cancelSearch() {
-      this.searchWord = ""
-      this.fetchSearchNews()
+      this.resetData()
+      this.fetchData()
     },
     loadMore() {
-      this.currentPage += 1;
-      this.fetchData();
+      this.searchModel.currentPage += 1;
+      if(this.searchWord !== '') {
+        this.fetchSearchNews()
+      }
+      else {
+        this.fetchData();
+      }
     }
   }
 

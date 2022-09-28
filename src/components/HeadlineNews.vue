@@ -3,7 +3,7 @@
     <v-layout row wrap align-center>
           
           <v-flex xs8 offset-xs2>
-            <div v-for="article in articles" :key="article.title">
+            <div v-for="(article, index) in articles" :key="index">
               <v-card class="my-3" hover data-aos="zoom-in" data-aos-easing="ease">
                 <v-img
                   height="350px"
@@ -27,8 +27,7 @@
                 </v-chip>
 
                 <v-spacer></v-spacer>
-
-                <v-btn small replace color="info" v-bind:href="article.url" target="_blank" >READ FULL ARTICLE</v-btn>
+                <v-btn small replace color="info" @click="readNews(article)" target="_blank" >READ FULL ARTICLE</v-btn>
               </v-card-actions>
             </v-card>
             </div>
@@ -42,6 +41,11 @@
 export default {
   props: {
       articles: Array
+  },
+  methods: {
+    readNews(article){
+      this.$router.push({ name: 'Article', query: { title: article.title }})
+    }
   }
 }
 </script>
