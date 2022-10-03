@@ -67,7 +67,7 @@ export default {
         currentPage: 1,
         maxPerPage: 20,
         searchWord: '',
-        country: 'gb',
+        country: 'us',
         selectedSortingType: "publishedAt"
       }
     }
@@ -93,6 +93,7 @@ export default {
       this.$store.commit('news/CLEAR_HEADLINE_NEWS');
       this.searchModel.selectedSortingType = "publishedAt"
       this.searchModel.searchWord = ""
+      this.newsSearched = false
     },
     fetchData() {
       this.$store.dispatch('news/GET_HEADLINE_NEWS', this.searchModel)
@@ -102,7 +103,7 @@ export default {
       {
         if(this.newsSearched != true || this.selectedSortingType != this.searchModel.selectedSortingType || this.searchModel.searchWord != this.searchWord) {
           this.searchModel.currentPage = 1
-          this.searchModel.searchWord = this.searchWord
+          this.searchModel.searchWord = this.searchWord.split(' ').join('+')
           this.searchModel.selectedSortingType = this.selectedSortingType
         }
         this.newsSearched = true

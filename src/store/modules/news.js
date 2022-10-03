@@ -5,11 +5,15 @@ export const namespaced = true
 
 export const state = {
   article: [],
+  forwardedArticle: [],
   landingPageNews: [],
   totalResults: 0
 } 
 
 export const mutations = {
+  SET_FORWARDED_ARTICLE(state, forwardedArticle) {
+    state.forwardedArticle = forwardedArticle
+  },
   SET_ARTICLE(state, article) {
     state.article = article
   },
@@ -27,8 +31,8 @@ export const mutations = {
 export const actions = {
   GET_ARTICLE_INFO({ commit }, titile) {
       try {
+        
           const apiUrl ='https://newsapi.org/v2/everything?q="' + encodeURIComponent(titile) + '"' +
-          '&searchIn=title' +
           '&apiKey=' + Vue.prototype.$apiKey;
           
           axios.get(apiUrl).then(response => {

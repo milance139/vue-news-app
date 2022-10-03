@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     readNews(article){
+      this.$store.commit('news/SET_FORWARDED_ARTICLE', article);
       this.$router.push({ name: 'Article', query: { title: article.title }})
     }
   }

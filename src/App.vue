@@ -3,7 +3,7 @@
 
     <Header/>
 
-    <v-main id="app">
+    <v-main id="app" class="my-5">
       <router-view/>
     </v-main>
 
