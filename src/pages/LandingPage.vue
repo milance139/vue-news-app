@@ -2,10 +2,9 @@
    <v-app light>
 
     <v-container fluid>
-        
+      <v-flex xs8 offset-xs2 >
         <v-layout row wrap class="my-5">
-            <v-flex xs8 offset-xs2 >
-                <v-form @submit.prevent="fetchSearchNews" class="align-self-center">
+                <v-form @submit.prevent="fetchSearchNews" class="align-self-center w-100">
                     <v-text-field
                         v-model="searchWord"
                         placeholder="Search news..."
@@ -16,7 +15,7 @@
                         @click:append="newsSearched ? cancelSearch() : fetchSearchNews()"
                     ></v-text-field>
                 </v-form>
-                <div class="text-center mt-5" v-if="newsSearched">
+                <div class="text-center mt-5 w-100" v-if="newsSearched">
                     <v-select
                         :items="sortingItems"
                         v-model="selectedSortingType"
@@ -26,16 +25,17 @@
                         @change="sortNews()"
                     ></v-select>
                 </div>
-            </v-flex>
         </v-layout>
-
-        <HeadlineNews :articles="landingPageNews"></HeadlineNews>
+        
+        <div v-for="(article, index) in landingPageNews" :key="index">
+          <Article :article="article"></Article>
+        </div>
                     
         <v-layout row wrap class="my-5">
-            <v-flex xs8 offset-xs2>
                 <v-btn block elevation="2" v-if="haveMorePages" @click="loadMore()" color="primary">Load more</v-btn>
-            </v-flex>
         </v-layout>
+
+      </v-flex>
     </v-container>
     <v-icon class="go-to-top-button" color="white" @click="toTop">
       mdi-chevron-up
@@ -46,12 +46,12 @@
 
 <script>
 
-import HeadlineNews from '../components/HeadlineNews.vue'
+import Article from '../components/Article.vue'
 import { mapState, Store } from 'vuex'
 
 export default {
   components: {
-    HeadlineNews
+    Article
   },
   data() {
     return {
@@ -93,6 +93,7 @@ export default {
       this.$store.commit('news/CLEAR_HEADLINE_NEWS');
       this.searchModel.selectedSortingType = "publishedAt"
       this.searchModel.searchWord = ""
+      this.searchWord = ""
       this.newsSearched = false
     },
     fetchData() {
@@ -151,5 +152,8 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+}
+.w-100{
+  width: 100%;
 }
 </style>

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import LandingPage from '@/pages/LandingPage'
-import Article from '@/pages/Article'
+import ArticlePage from '@/pages/ArticlePage'
 import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
@@ -15,8 +15,8 @@ const router = new VueRouter({
     },
     {
       path: '/article',
-      name: 'Article',
-      component: Article
+      name: 'ArticlePage',
+      component: ArticlePage
     }
   ]
 })
